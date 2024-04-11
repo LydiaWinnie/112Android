@@ -1,6 +1,7 @@
 package com.example.calculator;
 
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 enum State {FirstNumberInput, OperatorInputed, NumberInput}
 enum OP { None, Add, Sub, Mul, Div}
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,8 +42,21 @@ public class MainActivity extends AppCompatActivity {
             btn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 36 );
         }
     }
+    public void onPause(){
+        super.onPause();
+        SharedPreferences appSharePrefs=getSharedPreferences("pre_value",MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor=appSharePrefs.edit();
+        prefsEditor.putString("newItem",(new Integer(theValue)).toString());
+        prefsEditor.commit();
+    }
+    public void onResume(){
+        super.onResume();
+        SharedPreferences appSharePrefs=getSharedPreferences("pre_value",MODE_PRIVATE);
+        theValue=(new Integer(appSharePrefs.getString("newItem","0"))).intValue();
 
-    /*
+    }
+
+
     public void onWindowFocusChanged (boolean hasFocus) {
         GridLayout keysGL = (GridLayout) findViewById(R.id.keys);
 
@@ -56,7 +71,9 @@ public class MainActivity extends AppCompatActivity {
             btn.setWidth(kbWidth);
             btn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 36 );
         }
-    }*/
+        EditText edt=(EditText) findViewById(R.id.display);
+        edt.setText((CharSequence) (""+theValue));
+    }
     public void processKeyInput(View view){
         Button b= (Button )view;    // 取得發生事件的按鈕
         String bstr= b.getText().toString();   // 取得發生事件的按鈕上的文字
